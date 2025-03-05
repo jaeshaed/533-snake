@@ -1,25 +1,54 @@
-import numpy
 import pygame
 import sys
-from random import *
-
+import json
 pos = 0
-neg = 1
+nig = 1
 block = 0
 b_scale = 30
 
-grid = [[block]*20 for n in range(20)]  # generating clear grid list
+with open('gridMap.json', 'r') as file:
+    data = json.load(file)
 
-def draw():  # randomly revalue "blocks" in grid and draw's grid in pygame / soon drawing the grid will be delated 
+gridSample = [
+ [pos, pos, pos, nig, pos, pos, pos, pos, pos, pos, pos, pos, pos, nig, pos, pos, pos, pos, pos, pos],
+ [pos, pos, pos, nig, pos, pos, pos, pos, pos, pos, pos, pos, pos, nig, pos, nig, nig, nig, nig, pos],
+ [pos, pos, pos, nig, pos, pos, pos, pos, pos, pos, pos, pos, pos, nig, pos, pos, pos, pos, pos, pos],
+ [pos, pos, pos, nig, pos, nig, pos, nig, pos, pos, pos, pos, pos, nig, pos, pos, pos, pos, pos, pos],
+ [pos, pos, pos, nig, nig, nig, nig, pos, pos, pos, pos, pos, pos, nig, pos, pos, pos, pos, pos, pos],
+ [pos, pos, pos, nig, pos, pos, nig, pos, pos, pos, pos, pos, pos, nig, pos, pos, nig, pos, pos, pos],
+ [pos, pos, pos, nig, pos, pos, nig, pos, pos, pos, pos, pos, pos, nig, pos, pos, nig, nig, pos, pos],
+ [pos, pos, pos, pos, pos, pos, nig, pos, pos, nig, pos, pos, pos, nig, pos, pos, pos, nig, pos, pos],
+ [pos, pos, pos, pos, pos, pos, nig, pos, pos, nig, nig, pos, pos, nig, pos, pos, pos, nig, pos, pos],
+ [pos, pos, pos, pos, nig, nig, nig, pos, pos, pos, nig, pos, pos, nig, pos, pos, pos, nig, pos, pos],
+ [pos, pos, pos, pos, pos, pos, nig, pos, pos, pos, nig, pos, pos, nig, pos, pos, pos, nig, pos, pos],
+ [pos, pos, pos, pos, pos, pos, nig, pos, pos, pos, nig, pos, pos, pos, pos, pos, pos, nig, pos, pos],
+ [pos, pos, pos, pos, pos, pos, nig, pos, pos, pos, nig, pos, pos, pos, pos, pos, pos, nig, pos, pos],
+ [pos, pos, pos, pos, pos, pos, nig, pos, pos, pos, nig, pos, pos, pos, pos, nig, nig, nig, nig, pos],
+ [pos, pos, pos, pos, nig, nig, nig, nig, nig, nig, nig, nig, nig, pos, pos, nig, pos, pos, pos, pos],
+ [pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, nig, pos, pos, nig, pos, pos, pos, pos],
+ [pos, nig, nig, pos, pos, pos, pos, pos, pos, pos, pos, pos, nig, pos, pos, nig, pos, pos, pos, pos],
+ [pos, nig, nig, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, nig, pos, pos, pos, pos],
+ [pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos],
+ [pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos]
+]
+
+TempGrid = gridSample
+
+# for i in range(20):
+#     grid = [[block] * 20]
+#     grid.append([block] * 20)
+#     block = randint(0, 1)
+
+def draw():
     x=0
     y=0
-    for row in grid:
-        for col in grid:
-            block = randrange(5)
-            if block >= 1:
-                wth = 2
-            else:
-                wth = 0
+    for row in TempGrid:
+        for col in TempGrid:
+            for variation in TempGrid:
+                if pos:
+                    wth = 2
+                elif nig:
+                    wth = 0
             r = pygame.Rect(x,y,b_scale,b_scale)
             pygame.draw.rect(screen, (255, 250, 0), r, wth)
             x = x + b_scale
@@ -31,7 +60,11 @@ pygame.init()
 
 screen = pygame.display.set_mode((800, 800))
 draw()
-print(grid)
+print(data)
+n = 0
+for i in range(20):
+    print(TempGrid[n])
+    n +=1
 
 while True:
     for event in pygame.event.get():
@@ -39,26 +72,3 @@ while True:
             pygame.quit()
             sys.exit()
     pygame.display.flip()
-
-# grid = [
-#  [pos, pos, pos, neg, pos, pos, pos, pos, pos, pos, pos, pos, pos, neg, pos, pos, pos, pos, pos, pos],
-#  [pos, pos, pos, neg, pos, pos, pos, pos, pos, pos, pos, pos, pos, neg, pos, neg, neg, neg, neg, pos],
-#  [pos, pos, pos, neg, pos, pos, pos, pos, pos, pos, pos, pos, pos, neg, pos, pos, pos, pos, pos, pos],
-#  [pos, pos, pos, neg, pos, neg, pos, neg, pos, pos, pos, pos, pos, neg, pos, pos, pos, pos, pos, pos],
-#  [pos, pos, pos, neg, neg, neg, neg, pos, pos, pos, pos, pos, pos, neg, pos, pos, pos, pos, pos, pos],
-#  [pos, pos, pos, neg, pos, pos, neg, pos, pos, pos, pos, pos, pos, neg, pos, pos, neg, pos, pos, pos],
-#  [pos, pos, pos, neg, pos, pos, neg, pos, pos, pos, pos, pos, pos, neg, pos, pos, neg, neg, pos, pos],
-#  [pos, pos, pos, pos, pos, pos, neg, pos, pos, neg, pos, pos, pos, neg, pos, pos, pos, neg, pos, pos],
-#  [pos, pos, pos, pos, pos, pos, neg, pos, pos, neg, neg, pos, pos, neg, pos, pos, pos, neg, pos, pos],
-#  [pos, pos, pos, pos, neg, neg, neg, pos, pos, pos, neg, pos, pos, neg, pos, pos, pos, neg, pos, pos],
-#  [pos, pos, pos, pos, pos, pos, neg, pos, pos, pos, neg, pos, pos, neg, pos, pos, pos, neg, pos, pos],
-#  [pos, pos, pos, pos, pos, pos, neg, pos, pos, pos, neg, pos, pos, pos, pos, pos, pos, neg, pos, pos],
-#  [pos, pos, pos, pos, pos, pos, neg, pos, pos, pos, neg, pos, pos, pos, pos, pos, pos, neg, pos, pos],
-#  [pos, pos, pos, pos, pos, pos, neg, pos, pos, pos, neg, pos, pos, pos, pos, neg, neg, neg, neg, pos],
-#  [pos, pos, pos, pos, neg, neg, neg, neg, neg, neg, neg, neg, neg, pos, pos, neg, pos, pos, pos, pos],
-#  [pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, neg, pos, pos, neg, pos, pos, pos, pos],
-#  [pos, neg, neg, pos, pos, pos, pos, pos, pos, pos, pos, pos, neg, pos, pos, neg, pos, pos, pos, pos],
-#  [pos, neg, neg, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, neg, pos, pos, pos, pos],
-#  [pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos],
-#  [pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos]
-# ]
