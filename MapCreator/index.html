@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Grid Map Editor</title>
+    <style>
+        /* Previous styles remain the same */
+        .map-list {
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <canvas id="gridCanvas"></canvas>
+        <div class="controls">
+            <input type="text" id="mapName" placeholder="Map name">
+            <button onclick="saveMap()">Save Map</button>
+            <button onclick="clearGrid()">Clear</button>
+            <button onclick="newGrid()">Add</button>
+            <div class="map-list" id="mapList"></div>
+            <div>
+                <button onclick="setTool('wall')" style="background-color: #ff0000">Wall (1)</button>
+                <button onclick="setTool('empty')" style="background-color: #c7c7c7">Empty (0)</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gridCanvas');
+        const ctx = canvas.getContext('2d');
+        const cellSize = 32;
+        const gridSize = 20; // 20x20 grid
+        
+        let currentTool = 'wall';
+        let grid = Array(gridSize).fill().map(() => Array(gridSize).fill(0));
+
+        // Set canvas size
+        canvas.width = gridSize * cellSize;
+        canvas.height = gridSize * cellSize;
+
+        function setTool(tool) {
+            currentTool = tool;
+        }
+
+        function drawGrid() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            for (let y = 0; y < gridSize; y++) {
+                for (let x = 0; x < gridSize; x++) {
+                    ctx.fillStyle = grid[y][x] === 1 ? '#ac0000' : '#c7c7c7';
+                    ctx.fillRect(x * cellSize, y * cellSize, cellSize - 1, cellSize - 1);
+                }
+            }
+        }
+
+        // Handle canvas interaction
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseleave', stopDrawing);
+
+        let isDrawing = false;
+
+        function startDrawing(e) {
+            isDrawing = true;
+            draw(e);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.floor((e.clientX - rect.left) / cellSize);
+            const y = Math.floor((e.clientY - rect.top) / cellSize);
+            
+            if (x >= 0 && x < gridSize && y >= 0 && y < gridSize) {
+                grid[y][x] = currentTool === 'wall' ? 1 : 0;
+                drawGrid();
+            }
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        function clearGrid() {
+            grid = Array(gridSize).fill().map(() => Array(gridSize).fill(0));
+            drawGrid();
+        }
+
+        function newGrid() {
+            alert('Function under construction')
+        }
+
+        async function saveMap() {
+            const mapName = document.getElementById('mapName').value;
+            const json =JSON.stringify([grid]);
+            const blob = new Blob([json], { type: 'application/json'});
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = mapName, '.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild;
+            URL.revokeObjectURL(url);
+            
+            refreshMapList();
+        }
+
+        // Initial draw
+        drawGrid();
+    </script>
+</body>
+</html>

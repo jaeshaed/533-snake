@@ -1,74 +1,56 @@
-import pygame
-import sys
 import json
-pos = 0
-nig = 1
+import random
+from pathlib import Path
+
 block = 0
 b_scale = 30
 
-with open('gridMap.json', 'r') as file:
-    data = json.load(file)
-
+TempGrid = []
 gridSample = [
- [pos, pos, pos, nig, pos, pos, pos, pos, pos, pos, pos, pos, pos, nig, pos, pos, pos, pos, pos, pos],
- [pos, pos, pos, nig, pos, pos, pos, pos, pos, pos, pos, pos, pos, nig, pos, nig, nig, nig, nig, pos],
- [pos, pos, pos, nig, pos, pos, pos, pos, pos, pos, pos, pos, pos, nig, pos, pos, pos, pos, pos, pos],
- [pos, pos, pos, nig, pos, nig, pos, nig, pos, pos, pos, pos, pos, nig, pos, pos, pos, pos, pos, pos],
- [pos, pos, pos, nig, nig, nig, nig, pos, pos, pos, pos, pos, pos, nig, pos, pos, pos, pos, pos, pos],
- [pos, pos, pos, nig, pos, pos, nig, pos, pos, pos, pos, pos, pos, nig, pos, pos, nig, pos, pos, pos],
- [pos, pos, pos, nig, pos, pos, nig, pos, pos, pos, pos, pos, pos, nig, pos, pos, nig, nig, pos, pos],
- [pos, pos, pos, pos, pos, pos, nig, pos, pos, nig, pos, pos, pos, nig, pos, pos, pos, nig, pos, pos],
- [pos, pos, pos, pos, pos, pos, nig, pos, pos, nig, nig, pos, pos, nig, pos, pos, pos, nig, pos, pos],
- [pos, pos, pos, pos, nig, nig, nig, pos, pos, pos, nig, pos, pos, nig, pos, pos, pos, nig, pos, pos],
- [pos, pos, pos, pos, pos, pos, nig, pos, pos, pos, nig, pos, pos, nig, pos, pos, pos, nig, pos, pos],
- [pos, pos, pos, pos, pos, pos, nig, pos, pos, pos, nig, pos, pos, pos, pos, pos, pos, nig, pos, pos],
- [pos, pos, pos, pos, pos, pos, nig, pos, pos, pos, nig, pos, pos, pos, pos, pos, pos, nig, pos, pos],
- [pos, pos, pos, pos, pos, pos, nig, pos, pos, pos, nig, pos, pos, pos, pos, nig, nig, nig, nig, pos],
- [pos, pos, pos, pos, nig, nig, nig, nig, nig, nig, nig, nig, nig, pos, pos, nig, pos, pos, pos, pos],
- [pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, nig, pos, pos, nig, pos, pos, pos, pos],
- [pos, nig, nig, pos, pos, pos, pos, pos, pos, pos, pos, pos, nig, pos, pos, nig, pos, pos, pos, pos],
- [pos, nig, nig, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, nig, pos, pos, pos, pos],
- [pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos],
- [pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos, pos]
+    [
+    [0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0],
+    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0],
+    [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+    [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+    [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+    [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+    [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+    [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0],
+    [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0],
+    [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ]
 ]
 
-TempGrid = gridSample
+directory = Path("MapEditor") / "maps"
+files = [file.name for file in directory.iterdir() if file.is_file()]
+print("Files:", files)
 
-# for i in range(20):
-#     grid = [[block] * 20]
-#     grid.append([block] * 20)
-#     block = randint(0, 1)
+file_name = input("write a name of file: \n")
 
-def draw():
-    x=0
-    y=0
-    for row in TempGrid:
-        for col in TempGrid:
-            for variation in TempGrid:
-                if pos:
-                    wth = 2
-                elif nig:
-                    wth = 0
-            r = pygame.Rect(x,y,b_scale,b_scale)
-            pygame.draw.rect(screen, (255, 250, 0), r, wth)
-            x = x + b_scale
+script = Path(__file__).resolve().parent / directory
+file_path = script / file_name
+try:
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+        TempGrid = random.choice(data)
+except FileNotFoundError:
+    print("file not found, so used Sample of grid")
+    TempGrid = random.choice(gridSample)
 
-        y = y + b_scale
-        x = 0
+def debugPrint():
+    n = 0
+    for i in range(20):
+        print(TempGrid[n])
+        n +=1
 
-pygame.init()
-
-screen = pygame.display.set_mode((800, 800))
-draw()
-print(data)
-n = 0
-for i in range(20):
-    print(TempGrid[n])
-    n +=1
-
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-    pygame.display.flip()
+debugPrint()
