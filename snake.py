@@ -31,11 +31,11 @@ gridSample = [
     ]
 ]
 
-directory = Path("MapEditor") / "maps"
+directory = Path("MapCreator") / "maps"
 files = [file.name for file in directory.iterdir() if file.is_file()]
 print("Files:", files)
 
-file_name = input("write a name of file: \n")
+file_name = str(input("write a name of file: \n"))
 
 script = Path(__file__).resolve().parent / directory
 file_path = script / file_name
@@ -46,6 +46,10 @@ try:
 except FileNotFoundError:
     print("file not found, so used Sample of grid")
     TempGrid = random.choice(gridSample)
+except PermissionError:
+    print("file not found, so used Sample of grid")
+    TempGrid = random.choice(gridSample)
+
 
 def debugPrint():
     n = 0
