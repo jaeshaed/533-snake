@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 
 pygame.init()
 
@@ -22,10 +23,8 @@ snake_images_vertical = [
 ]
 
 # Загрузка изображения головы змейки
-snake_head = pygame.image.load('graf/head.png')
-snake_head1 = pygame.image.load('graf/head1.png')
-snake_head2 = pygame.image.load('graf/head2.png')
-snake_head3 = pygame.image.load('graf/head3.png')
+snake_head_image = pygame.image.load('graf/head.png')
+snake_tail_image = pygame.image.load('graf/tail.png')
 
 # Масштабируем изображения
 for i in range(len(snake_images_horizontal)):
@@ -35,19 +34,16 @@ for i in range(len(snake_images_vertical)):
     snake_images_vertical[i] = pygame.transform.scale(snake_images_vertical[i], (35, 35))
 
 # Масштабируем изображение головы
-snake_head = pygame.transform.scale(snake_head, (35, 35))
-snake_head1 = pygame.transform.scale(snake_head1, (35, 35))
-snake_head2 = pygame.transform.scale(snake_head2, (35, 35))
-snake_head3 = pygame.transform.scale(snake_head3, (35, 35))
+snake_head_image = pygame.transform.scale(snake_head_image, (35, 35))
 
-fon = pygame.image.load("graf/fon.png")
-pole = pygame.image.load("graf/pole.png")
+fon = pygame.image.load("graf/52.png")
+pole = pygame.image.load("graf/42.png")
 food_images = [
     pygame.image.load("graf/cherry.png"),
     pygame.image.load("graf/banana.png"),
-    pygame.image.load("graf/blueberry.png"),
+    pygame.image.load("graf/apple.png"),
     pygame.image.load("graf/watermelon.png"),
-    pygame.image.load("graf/apple.png")
+    pygame.image.load("graf/blueberry.png")
 ]
 
 for i in range(len(food_images)):
@@ -84,12 +80,28 @@ grid_size = 20
 offset_x = 50
 offset_y = 80
 
+def rotated(image, direction):
+    if direction == (1, 0):  # Вправо
+        return pygame.transform.rotate(image, 270)
+    elif direction == (-1, 0):  # Влево
+        return pygame.transform.rotate(image, 90)
+    elif direction == (0, -1):  # Вверх
+        return image
+    elif direction == (0, 1):  # Вниз
+        return pygame.transform.rotate(image, 180)
+    return image
+
 def draw_snake(snake, snake_directions):
     global animation_counter
     for i, segment in enumerate(snake):
         if i == 0:  # Если это голова змейки
-            # Используем изображение головы
-            window.blit(snake_head, (offset_x + segment[0] * cell_size, offset_y + segment[1] * cell_size))
+            # Поворачиваем голову в зависимости от направления
+            rotated_head = rotated(snake_head_image, snake_directions[i])
+            window.blit(rotated_head, (offset_x + segment[0] * cell_size, offset_y + segment[1] * cell_size))
+        if i == 1:  # Если это голова змейки
+            # Поворачиваем голову в зависимости от направления
+            rotated_tail = rotated(snake_head_image, snake_directions[i])
+            window.blit(rotated_head, (offset_x + segment[0] * cell_size, offset_y + segment[1] * cell_size))
         else:  # Для остальных сегментов
             # Определяем, какое изображение использовать для текущего сегмента
             segment_direction = snake_directions[i]
