@@ -12,20 +12,14 @@ gray = (128, 128, 128)
 
 # Загрузка изображений для змейки
 snake_images_horizontal = [
-    pygame.image.load('graf/11.png'),  # Первое изображение для горизонтального движения
-    pygame.image.load('graf/12.png'),  # Второе изображение для горизонтального движения
+    pygame.image.load('11.png'),  # Первое изображение для горизонтального движения
+    pygame.image.load('12.png'),  # Второе изображение для горизонтального движения
 ]
 
 snake_images_vertical = [
-    pygame.image.load('graf/9.png'),  # Первое изображение для вертикального движения
-    pygame.image.load('graf/10.png'),  # Второе изображение для вертикального движения
+    pygame.image.load('9.png'),  # Первое изображение для вертикального движения
+    pygame.image.load('10.png'),  # Второе изображение для вертикального движения
 ]
-
-# Загрузка изображения головы змейки
-snake_head = pygame.image.load('graf/head.png')
-snake_head1 = pygame.image.load('graf/head1.png')
-snake_head2 = pygame.image.load('graf/head2.png')
-snake_head3 = pygame.image.load('graf/head3.png')
 
 # Масштабируем изображения
 for i in range(len(snake_images_horizontal)):
@@ -34,20 +28,14 @@ for i in range(len(snake_images_horizontal)):
 for i in range(len(snake_images_vertical)):
     snake_images_vertical[i] = pygame.transform.scale(snake_images_vertical[i], (35, 35))
 
-# Масштабируем изображение головы
-snake_head = pygame.transform.scale(snake_head, (35, 35))
-snake_head1 = pygame.transform.scale(snake_head1, (35, 35))
-snake_head2 = pygame.transform.scale(snake_head2, (35, 35))
-snake_head3 = pygame.transform.scale(snake_head3, (35, 35))
-
-fon = pygame.image.load("graf/fon.png")
-pole = pygame.image.load("graf/pole.png")
+fon = pygame.image.load("52.png")
+pole = pygame.image.load("42.png")
 food_images = [
-    pygame.image.load("graf/cherry.png"),
-    pygame.image.load("graf/banana.png"),
-    pygame.image.load("graf/blueberry.png"),
-    pygame.image.load("graf/watermelon.png"),
-    pygame.image.load("graf/apple.png")
+    pygame.image.load("cherry.png"),
+    pygame.image.load("banana.png"),
+    pygame.image.load("apple.png"),
+    pygame.image.load("watermelon.png"),
+    pygame.image.load("bluberry.png")
 ]
 
 for i in range(len(food_images)):
@@ -87,20 +75,16 @@ offset_y = 80
 def draw_snake(snake, snake_directions):
     global animation_counter
     for i, segment in enumerate(snake):
-        if i == 0:  # Если это голова змейки
-            # Используем изображение головы
-            window.blit(snake_head, (offset_x + segment[0] * cell_size, offset_y + segment[1] * cell_size))
-        else:  # Для остальных сегментов
-            # Определяем, какое изображение использовать для текущего сегмента
-            segment_direction = snake_directions[i]
-            if segment_direction == (1, 0) or segment_direction == (-1, 0):  # Горизонтальное движение
-                image_index = (animation_counter + i) % len(snake_images_horizontal)
-                current_image = snake_images_horizontal[image_index]
-            else:  # Вертикальное движение
-                image_index = (animation_counter + i) % len(snake_images_vertical)
-                current_image = snake_images_vertical[image_index]
-            # Отрисовываем изображение
-            window.blit(current_image, (offset_x + segment[0] * cell_size, offset_y + segment[1] * cell_size))
+        # Определяем, какое изображение использовать для текущего сегмента
+        segment_direction = snake_directions[i]
+        if segment_direction == (1, 0) or segment_direction == (-1, 0):  # Горизонтальное движение
+            image_index = (animation_counter + i) % len(snake_images_horizontal)
+            current_image = snake_images_horizontal[image_index]
+        else:  # Вертикальное движение
+            image_index = (animation_counter + i) % len(snake_images_vertical)
+            current_image = snake_images_vertical[image_index]
+        # Отрисовываем изображение
+        window.blit(current_image, (offset_x + segment[0] * cell_size, offset_y + segment[1] * cell_size))
 
 def draw_food(food):
    global random_food
@@ -128,12 +112,10 @@ while running:
     # Проверка на столкновение с границами
     if new_head[0] < 0 or new_head[0] >= grid_size or new_head[1] < 0 or new_head[1] >= grid_size:
         running = False
-        continue
 
     # Проверка на столкновение с самой собой
     if new_head in snake:
         running = False
-        continue
 
     # Добавление новой головы
     snake.insert(0, new_head)
