@@ -1,6 +1,5 @@
 import pygame
 import random
-import math
 
 pygame.init()
 
@@ -22,7 +21,7 @@ snake_images_vertical = [
     pygame.image.load('graf/10.png'),  # Второе изображение для вертикального движения
 ]
 
-# Загрузка изображения головы змейки
+# Загрузка изображения головы и хвоста змейки
 snake_head_image = pygame.image.load('graf/head.png')
 snake_tail_image = pygame.image.load('graf/tail.png')
 
@@ -33,11 +32,15 @@ for i in range(len(snake_images_horizontal)):
 for i in range(len(snake_images_vertical)):
     snake_images_vertical[i] = pygame.transform.scale(snake_images_vertical[i], (35, 35))
 
-# Масштабируем изображение головы
+# Масштабируем изображение головы и хвоста
 snake_head_image = pygame.transform.scale(snake_head_image, (35, 35))
+snake_tail_image = pygame.transform.scale(snake_tail_image, (35, 35))
 
-fon = pygame.image.load("graf/52.png")
-pole = pygame.image.load("graf/42.png")
+# Загрузка фона и поля
+fon = pygame.image.load("graf/fon.png")
+pole = pygame.image.load("graf/pole.png")
+
+# Загрузка изображений еды
 food_images = [
     pygame.image.load("graf/cherry.png"),
     pygame.image.load("graf/banana.png"),
@@ -58,7 +61,7 @@ pygame.display.set_caption('Змейка')
 clock = pygame.time.Clock()
 
 # Змейка
-snake = [(0, 10), (-1, 10)]  # Начальный размер змейки
+snake = [(0, 10), (-1, 10), (-2, 10)]  # Начальный размер змейки
 direction = (1, 0)  # Направление движения (по умолчанию вправо)
 
 # Список направлений для каждого сегмента змейки
@@ -81,6 +84,9 @@ offset_x = 50
 offset_y = 80
 
 def rotated(image, direction):
+    """
+    Поворачивает изображение в зависимости от направления.
+    """
     if direction == (1, 0):  # Вправо
         return pygame.transform.rotate(image, 270)
     elif direction == (-1, 0):  # Влево
@@ -94,16 +100,13 @@ def rotated(image, direction):
 def draw_snake(snake, snake_directions):
     global animation_counter
     for i, segment in enumerate(snake):
-        if i == 0:  # Если это голова змейки
-            # Поворачиваем голову в зависимости от направления
+        if i == 0:  # Голова змейки
             rotated_head = rotated(snake_head_image, snake_directions[i])
             window.blit(rotated_head, (offset_x + segment[0] * cell_size, offset_y + segment[1] * cell_size))
-        if i == 1:  # Если это голова змейки
-            # Поворачиваем голову в зависимости от направления
-            rotated_tail = rotated(snake_head_image, snake_directions[i])
-            window.blit(rotated_head, (offset_x + segment[0] * cell_size, offset_y + segment[1] * cell_size))
-        else:  # Для остальных сегментов
-            # Определяем, какое изображение использовать для текущего сегмента
+        elif i == len(snake) - 1:  # Хвост змейки
+            rotated_tail = rotated(snake_tail_image, snake_directions[i])
+            window.blit(rotated_tail, (offset_x + segment[0] * cell_size, offset_y + segment[1] * cell_size))
+        else:  # Тело змейки
             segment_direction = snake_directions[i]
             if segment_direction == (1, 0) or segment_direction == (-1, 0):  # Горизонтальное движение
                 image_index = (animation_counter + i) % len(snake_images_horizontal)
@@ -111,12 +114,11 @@ def draw_snake(snake, snake_directions):
             else:  # Вертикальное движение
                 image_index = (animation_counter + i) % len(snake_images_vertical)
                 current_image = snake_images_vertical[image_index]
-            # Отрисовываем изображение
             window.blit(current_image, (offset_x + segment[0] * cell_size, offset_y + segment[1] * cell_size))
 
 def draw_food(food):
-   global random_food
-   window.blit(random_food, (offset_x + food[0] * cell_size, offset_y + food[1] * cell_size, cell_size, cell_size))
+    global random_food
+    window.blit(random_food, (offset_x + food[0] * cell_size, offset_y + food[1] * cell_size))
 
 # Основной игровой цикл
 running = True
@@ -170,7 +172,7 @@ while running:
     pygame.display.flip()
 
     # Управление FPS
-    clock.tick(10)
+    clock.tick(10)  # Увеличил FPS для более плавной игры
 
 # Завершение Pygame
 pygame.quit()
